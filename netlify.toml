@@ -1,0 +1,28 @@
+# Site estático: sem build, publica a raiz do repositório
+[build]
+  publish = "."
+
+# Arquivos internos do projeto não ficam visíveis no site
+[[redirects]]
+  from = "/banco-de-dados.sql"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/COMO-COLOCAR-NO-AR.txt"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/"
+  status = 404
+  force = true

@@ -1,0 +1,403 @@
+<!doctype html>
+<!-- © 2026 Samuel Inácio José. Todos os direitos reservados. Uso, cópia ou modificação somente com autorização. Ver LICENSE. -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yury Peixoto Barbearia · Agende seu horário</title>
+<meta name="description" content="Agende seu corte ou barba na Yury Peixoto Barbearia em poucos toques.">
+<meta name="theme-color" content="#0d0c0b">
+<meta property="og:title" content="Yury Peixoto Barbearia">
+<meta property="og:description" content="Agende seu horário online.">
+<meta property="og:image" content="logo.webp">
+<link rel="icon" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<style>
+.page { max-width: 600px; margin: 0 auto; padding-inline: 16px; padding-block: 0 40px; }
+.hero { text-align: center; padding-block: 20px 8px; }
+.hero img { width: min(340px, 86%); height: auto; display: block; margin: 0 auto; -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%); }
+.hero h1 { font-family: var(--font-display); font-weight: 500; letter-spacing: .08em; font-size: 1.25rem; margin: 8px 0 4px; text-wrap: balance; }
+.hero p { color: var(--muted); margin: 0; }
+
+.step { margin-top: 26px; }
+.step h2 { display: flex; align-items: baseline; gap: 10px; font-family: var(--font-display); font-weight: 500; font-size: 1rem; letter-spacing: .08em; margin: 0 0 12px; color: var(--silver); }
+.step h2 .n { color: var(--gold); font-size: .85rem; }
+.step h2 .val { margin-left: auto; font-family: var(--font-body); font-size: .85rem; letter-spacing: 0; color: var(--muted); font-weight: 400; }
+
+.svc { display: grid; gap: 8px; }
+.opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 13px 14px; }
+.opt:hover { border-color: var(--muted); }
+.opt[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-soft); }
+.opt .nm { flex: 1; font-weight: 600; min-width: 0; }
+.opt .dur { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.opt .pr { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--gold); }
+.barbers { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.barbers .barber { width: calc((100% - 20px) / 3); max-width: 150px; }
+.barber { position: relative; display: grid; grid-template-rows: auto 1fr; align-items: center; gap: 8px; padding: 6px 6px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; text-align: center; min-width: 0; transition: box-shadow .2s ease, border-color .2s ease; }
+.barber:hover { box-shadow: 0 0 16px rgba(201,164,92,.22); }
+.barber .ph { display: block; aspect-ratio: 3 / 4; width: 100%; }
+.barber .ph .ini, .barber .ph .any { background: radial-gradient(circle at 50% 35%, #2a2622, #121110); }
+.barber .ph img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
+.barber:hover .ph img { transform: scale(1.03); }
+.barber .ph .ini { display: grid; place-items: center; height: 100%; font-family: var(--font-display); font-size: 2rem; letter-spacing: .06em; color: var(--silver); }
+.barber .ph .any { display: grid; place-items: center; height: 100%; padding: 22%; }
+.barber .ph .any img { filter: none; object-fit: contain; mix-blend-mode: lighten; }
+.barber .bn { font-family: var(--font-display); font-weight: 500; letter-spacing: .05em; font-size: .9rem; line-height: 1.2; padding-inline: 6px; overflow-wrap: anywhere; }
+.barber[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 0 22px rgba(201,164,92,.32); }
+.barber[aria-pressed="true"] .bn { color: var(--gold); }
+.barber .ck { position: absolute; z-index: 2; top: 14px; right: 14px; width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: #17130c; display: none; place-items: center; font-size: .8rem; font-weight: 700; }
+.barber[aria-pressed="true"] .ck { display: grid; }
+
+.dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; }
+.date { flex: 0 0 66px; scroll-snap-align: start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 8px 4px; display: grid; gap: 1px; text-align: center; }
+.date .d { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.date .n { font-family: var(--font-display); font-size: 1.3rem; }
+.date .m { font-size: .7rem; color: var(--muted); }
+.date[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-soft); }
+.date[aria-pressed="true"] .n { color: var(--gold); }
+.date:disabled { opacity: .35; }
+.date:disabled .m::after { content: " · fechado"; }
+
+.times { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.time { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 0; font-variant-numeric: tabular-nums; font-weight: 500; }
+.time:hover { border-color: var(--muted); }
+.time[aria-pressed="true"] { border-color: var(--gold); background: var(--gold); color: #17130c; }
+.note { color: var(--muted); font-size: .9rem; margin: 0; }
+
+.form { display: grid; gap: 12px; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 4px; font-size: .95rem; }
+.summary b { font-weight: 600; }
+.summary .tot { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; font-weight: 600; }
+.summary .tot span:last-child { color: var(--gold); font-variant-numeric: tabular-nums; }
+
+.done { text-align: center; padding-block: 24px; display: grid; gap: 14px; justify-items: center; }
+.done .crown { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--gold); color: var(--gold); font-size: 1.5rem; }
+.done h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: .06em; color: var(--gold); margin: 0; }
+.done .summary { text-align: left; width: 100%; }
+
+footer { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; display: grid; gap: 6px; text-align: center; }
+footer a { color: var(--silver); }
+footer .adm { color: var(--faint); text-decoration: none; font-size: .78rem; }
+footer .credit { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; padding-top: 12px; padding-bottom: 72px; border-top: 1px solid var(--line); font-size: .76rem; color: var(--faint); }
+footer .credit a { color: var(--muted); text-decoration: none; }
+footer .credit a:hover { color: var(--gold); }
+footer .credit b { font-weight: 600; color: var(--muted); }
+.pays { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.pay { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 11px 12px; text-align: left; font-weight: 500; min-width: 0; }
+.pay:hover { border-color: var(--muted); }
+.pay[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-soft); }
+.pay svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--gold); }
+.pay span { min-width: 0; line-height: 1.2; }
+.fieldlabel { font-size: .78rem; color: var(--muted); letter-spacing: .04em; }
+.pixbox { width: 100%; display: grid; gap: 8px; text-align: left; border: 1px dashed var(--gold); border-radius: var(--r); padding: 12px 14px; }
+.pixbox code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .95rem; word-break: break-all; color: var(--fg); }
+.skeleton { color: var(--muted); padding: 30px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <img src="logo.webp" alt="Yury Peixoto Barbearia" width="620" height="440">
+    <h1>Agende seu horário</h1>
+    <p>Escolha o barbeiro, o serviço e o horário. Leva menos de um minuto.</p>
+  </header>
+
+  <main id="app"><p class="skeleton">Carregando horários…</p></main>
+
+  <footer id="footer">
+    <a class="adm" href="admin.html">Área do barbeiro</a>
+    <div class="credit"><span>© <span id="ano"></span> Yury Peixoto Barbearia</span><span id="devCredit">Desenvolvido por <b>Samuel Inácio</b></span></div>
+  </footer>
+</div>
+<div id="toastHost"></div>
+
+<script src="config.js"></script>
+<script src="agenda.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const CFG = window.BARBEARIA || {};
+  const DIAS = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+  const DIAS_C = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  const MESES_C = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const app = document.getElementById("app");
+
+  const ymd = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  const parseYmd = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+  const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate()+n); return ymd(d); };
+  const toMin = hm => { const [h,m] = hm.split(":").map(Number); return h*60+m; };
+  const toHm = m => String(Math.floor(m/60)).padStart(2,"0") + ":" + String(m%60).padStart(2,"0");
+  const brl = v => (Number(v)||0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const digits = s => String(s||"").replace(/\D/g, "");
+  const dateLong = s => { const d = parseYmd(s); return `${DIAS[d.getDay()].toLowerCase()}, ${d.getDate()} de ${MESES[d.getMonth()]}`; };
+  function toast(msg) {
+    const h = document.getElementById("toastHost");
+    h.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
+    clearTimeout(toast.t); toast.t = setTimeout(() => h.innerHTML = "", 3200);
+  }
+  function maskPhone(v) {
+    const d = digits(v).slice(0, 11);
+    if (d.length <= 2) return d ? "(" + d : "";
+    if (d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+    return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+  }
+
+  // footer
+  const foot = document.getElementById("footer");
+  const extra = [];
+  if (CFG.endereco) extra.push(`<span>${esc(CFG.endereco)}</span>`);
+  if (CFG.instagram) extra.push(`<a href="https://instagram.com/${encodeURIComponent(CFG.instagram)}" target="_blank" rel="noopener">@${esc(CFG.instagram)}</a>`);
+  if (CFG.whatsapp) extra.push(`<span>WhatsApp: ${esc(maskPhone(String(CFG.whatsapp).replace(/^55/, "")))}</span>`);
+  foot.insertAdjacentHTML("afterbegin", extra.join(""));
+  document.getElementById("ano").textContent = new Date().getFullYear();
+  if (CFG.devInstagram) {
+    const ig = String(CFG.devInstagram).replace(/^@/, "");
+    document.getElementById("devCredit").innerHTML = `Desenvolvido por <a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener"><b>Samuel Inácio</b></a>`;
+  }
+  const PAY_ICONS = {
+    pix: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l9 9-9 9-9-9z"/><path d="M8.5 12h7"/></svg>',
+    dinheiro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg>',
+    cartao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6.5 15h4"/></svg>'
+  };
+  const payIcon = n => /pix/i.test(n) ? PAY_ICONS.pix : /dinheiro|esp[eé]cie/i.test(n) ? PAY_ICONS.dinheiro : PAY_ICONS.cartao;
+
+  if (!window.supabase || !CFG.supabaseUrl || CFG.supabaseUrl.startsWith("COLE_")) {
+    app.innerHTML = `<div class="setup"><h2>Site quase pronto</h2><p>Falta ligar o site ao banco de dados. Abra o arquivo <b>config.js</b> e cole a Project URL e a chave anon do Supabase, como explica o <b>COMO-COLOCAR-NO-AR.txt</b>.</p></div>`;
+    return;
+  }
+  const sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey, { auth: { persistSession: false } });
+
+  const st = { cfg: null, dias: {}, busy: [], team: [], svc: null, barber: null, date: null, time: null, done: null, sending: false, err: "", pay: null };
+
+  async function load() {
+    const today = ymd(new Date());
+    const { data: c, error } = await sb.from("config").select("dados").eq("id", 1).single();
+    if (error || !c) { app.innerHTML = `<p class="skeleton">Não foi possível carregar a agenda agora. Tente de novo em instantes ou chame no WhatsApp.</p>`; return; }
+    st.cfg = c.dados;
+    st.horizon = Math.min(Number(st.cfg.antecedenciaDias) || 30, 60);
+    const last = addDays(today, st.horizon);
+    const [{ data: dias }, busy] = await Promise.all([
+      sb.from("dias").select("*").gte("data", today).lte("data", last),
+      fetchBusy(today, last)
+    ]);
+    st.dias = {}; (dias || []).forEach(d => st.dias[d.data] = d);
+    st.busy = busy;
+    st.team = AgendaYP.team(st.cfg).filter(b => b.ativo);
+    if (st.barber && st.barber !== "*" && !st.team.some(b => b.nome === st.barber)) { st.barber = null; st.time = null; }
+    if (st.svc && !service()) { st.svc = null; st.time = null; }
+    if (st.cfg.servicos.length === 1) st.svc = st.cfg.servicos[0].id;
+    if (st.team.length === 1) st.barber = st.team[0].nome;
+    render();
+  }
+  async function fetchBusy(from, to) {
+    const { data } = await sb.rpc("horarios_ocupados", { p_inicio: from, p_fim: to });
+    return data || [];
+  }
+
+  function isOpen(s) {
+    const o = st.dias[s];
+    return o ? o.status === "aberto" : st.cfg.diasAbertos.includes(parseYmd(s).getDay());
+  }
+  const service = () => st.cfg.servicos.find(s => s.id === st.svc);
+  const pays = () => Array.isArray(st.cfg.pagamentos) ? st.cfg.pagamentos : [];
+
+  const chosenBarbers = () => st.barber && st.barber !== "*" ? [st.barber] : st.team.map(b => b.nome);
+  // Compromissos do barbeiro no dia (atendimentos e horários bloqueados), em minutos
+  const busyOf = (date, b) => st.busy.filter(x => x.data === date && (x.barbeiro === b || x.barbeiro === "*"))
+    .map(x => [toMin(x.hora), toMin(x.hora) + Number(x.duracao)]);
+  function freeBarbers(date, start, dur) {
+    const open = toMin(st.cfg.abre), close = toMin(st.cfg.fecha);
+    return chosenBarbers().filter(b => start >= open && start + dur <= close &&
+      !busyOf(date, b).some(([a, z]) => a < start + dur && z > start));
+  }
+  // Horários livres do barbeiro escolhido (ou de qualquer um), seguindo a duração do serviço
+  function slotsFor(date) {
+    const svc = service(); if (!svc) return [];
+    const now = new Date(), today = ymd(now), nowMin = now.getHours()*60 + now.getMinutes();
+    const base = { open: toMin(st.cfg.abre), close: toMin(st.cfg.fecha), step: Number(st.cfg.intervalo) || 30, dur: Number(svc.duracao), minStart: date === today ? nowMin + 15 : -1 };
+    const all = new Set();
+    for (const b of chosenBarbers()) AgendaYP.slots({ ...base, busy: busyOf(date, b) }).forEach(m => all.add(m));
+    return [...all].sort((a, b) => a - b).map(toHm);
+  }
+  const initials = n => n.trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("") || "?";
+
+  function render() {
+    if (st.done) return renderDone();
+    const cfg = st.cfg, svc = service();
+    let h = "";
+    let n = 1;
+    h += `<section class="step"><h2><span class="n">${n++}</span>Selecione o barbeiro</h2><div class="barbers">
+      ${st.team.map(b => `<button class="barber" data-barber="${esc(b.nome)}" aria-pressed="${b.nome === st.barber}">
+        <span class="ph moldura">${b.foto ? `<img src="${esc(b.foto)}" alt="Foto de ${esc(b.nome)}" loading="lazy">` : `<span class="ini" aria-hidden="true">${esc(initials(b.nome))}</span>`}</span>
+        <span class="bn">${esc(b.nome)}</span><span class="ck" aria-hidden="true">✓</span></button>`).join("")}
+      ${st.team.length > 1 ? `<button class="barber" data-barber="*" aria-pressed="${st.barber === "*"}">
+        <span class="ph moldura"><span class="any"><img src="logo-yp.webp" alt=""></span></span>
+        <span class="bn">Sem preferência</span><span class="ck" aria-hidden="true">✓</span></button>` : ""}
+    </div></section>`;
+
+    if (st.barber) {
+      h += `<section class="step" id="stepSvc"><h2><span class="n">${n++}</span>Serviço</h2><div class="svc">${cfg.servicos.map(s => `
+        <button class="opt" data-svc="${esc(s.id)}" aria-pressed="${s.id === st.svc}">
+          <span class="nm">${esc(s.nome)}</span><span class="dur">${s.duracao} min</span><span class="pr">${brl(s.preco)}</span></button>`).join("")}</div></section>`;
+    }
+
+    if (svc && st.barber) {
+      const today = ymd(new Date());
+      let chips = "";
+      for (let i = 0; i <= st.horizon; i++) {
+        const s = addDays(today, i), d = parseYmd(s);
+        const ok = isOpen(s) && slotsFor(s).length > 0;
+        chips += `<button class="date" data-date="${s}" aria-pressed="${s === st.date}" ${isOpen(s) ? "" : "disabled"} ${ok || !isOpen(s) ? "" : 'data-full="1"'}>
+          <span class="d">${i === 0 ? "Hoje" : i === 1 ? "Amanhã" : DIAS_C[d.getDay()]}</span><span class="n">${d.getDate()}</span><span class="m">${MESES_C[d.getMonth()]}</span></button>`;
+      }
+      h += `<section class="step" id="stepDay"><h2><span class="n">${n++}</span>Dia</h2><div class="dates" id="dates">${chips}</div></section>`;
+    }
+
+    if (svc && st.barber && st.date) {
+      const slots = slotsFor(st.date);
+      h += `<section class="step" id="stepTime"><h2><span class="n">${n++}</span>Horário<span class="val">${esc(dateLong(st.date))}</span></h2>
+        ${slots.length ? `<div class="times">${slots.map(t => `<button class="time" data-time="${t}" aria-pressed="${t === st.time}">${t}</button>`).join("")}</div>`
+          : `<p class="note">Não há horários livres para ${esc(svc.nome.toLowerCase())} neste dia. Escolha outra data.</p>`}</section>`;
+    }
+
+    if (svc && st.barber && st.date && st.time) {
+      h += `<section class="step" id="stepForm"><h2><span class="n">${n++}</span>Seus dados</h2>
+        <form class="form" id="bookForm" novalidate>
+          <label class="f">Nome<input type="text" id="fNome" autocomplete="name" maxlength="80" required></label>
+          <label class="f">WhatsApp<input type="tel" id="fTel" autocomplete="tel" inputmode="numeric" placeholder="(11) 91234-5678" required></label>
+          ${pays().length ? `<div style="display:grid;gap:6px"><span class="fieldlabel">Como prefere pagar? <span style="color:var(--faint)">(o pagamento é feito na barbearia)</span></span>
+            <div class="pays">${pays().map(p => `<button type="button" class="pay" data-pay="${esc(p)}" aria-pressed="${p === st.pay}">${payIcon(p)}<span>${esc(p)}</span></button>`).join("")}</div></div>` : ""}
+          <div class="summary">
+            <span><b>${esc(svc.nome)}</b> · ${svc.duracao} min</span>
+            <span>${esc(dateLong(st.date))}, às <b>${st.time}</b></span>
+            <span>Barbeiro: ${st.barber === "*" ? "o primeiro disponível" : esc(st.barber)}</span>
+            ${st.pay ? `<span>Pagamento: ${esc(st.pay)}</span>` : ""}
+            <div class="tot"><span>Total</span><span>${brl(svc.preco)}</span></div>
+          </div>
+          <div class="err" id="fErr" role="alert">${esc(st.err)}</div>
+          <button class="btn gold lg" type="submit" ${st.sending ? "disabled" : ""}>${st.sending ? "Confirmando…" : "Confirmar agendamento"}</button>
+        </form></section>`;
+    }
+    const keep = { nome: document.getElementById("fNome")?.value, tel: document.getElementById("fTel")?.value };
+    const scroll = document.getElementById("dates")?.scrollLeft;
+    app.innerHTML = h;
+    if (keep.nome && document.getElementById("fNome")) document.getElementById("fNome").value = keep.nome;
+    if (keep.tel && document.getElementById("fTel")) document.getElementById("fTel").value = keep.tel;
+    if (scroll && document.getElementById("dates")) document.getElementById("dates").scrollLeft = scroll;
+    const saved = (() => { try { return JSON.parse(localStorage.getItem("yp-cliente")) || {}; } catch { return {}; } })();
+    const n1 = document.getElementById("fNome"), t1 = document.getElementById("fTel");
+    if (n1 && !n1.value && saved.nome) n1.value = saved.nome;
+    if (t1 && !t1.value && saved.tel) t1.value = saved.tel;
+  }
+
+  function renderDone() {
+    const d = st.done;
+    const msg = `Olá! Acabei de agendar pelo site: ${d.servico}, ${dateLong(d.data)} às ${d.hora} com ${d.barbeiro}. Nome: ${d.nome}.${d.pagamento ? " Pagamento: " + d.pagamento + "." : ""}`;
+    const wa = CFG.whatsapp ? `https://wa.me/${digits(CFG.whatsapp)}?text=${encodeURIComponent(msg)}` : null;
+    app.innerHTML = `<section class="done">
+      <div class="crown" aria-hidden="true">♛</div>
+      <h2>Horário marcado</h2>
+      <div class="summary">
+        <span><b>${esc(d.servico)}</b></span>
+        <span>${esc(dateLong(d.data))}, às <b>${esc(d.hora)}</b></span>
+        <span>Barbeiro: ${esc(d.barbeiro)}</span>
+        ${d.pagamento ? `<span>Pagamento: ${esc(d.pagamento)} (na barbearia)</span>` : ""}
+        <div class="tot"><span>Total</span><span>${brl(d.preco)}</span></div>
+      </div>
+      ${/pix/i.test(d.pagamento || "") && st.cfg.pixChave ? `<div class="pixbox"><span class="fieldlabel">Chave Pix da barbearia</span><code id="pixKey">${esc(st.cfg.pixChave)}</code><button class="btn sm" id="copyPix" type="button">Copiar chave Pix</button></div>` : ""}
+      <p class="note">Chegue uns minutinhos antes. Se precisar desmarcar ou mudar, avise a barbearia pelo WhatsApp.</p>
+      ${wa ? `<a class="btn wa lg" href="${esc(wa)}" target="_blank" rel="noopener">Avisar a barbearia no WhatsApp</a>` : ""}
+      <button class="btn ghost" id="again">Marcar outro horário</button>
+    </section>`;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  app.addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.dataset.svc) {
+      const first = !st.svc;
+      st.svc = t.dataset.svc; st.time = null; render();
+      if (first) document.getElementById("stepDay")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+    if (t.dataset.barber) {
+      const first = !st.barber;
+      st.barber = t.dataset.barber; st.time = null; render();
+      if (first) document.getElementById("stepSvc")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (t.dataset.date) {
+      st.date = t.dataset.date; st.time = null; render();
+      document.getElementById("stepTime")?.scrollIntoView({ behavior: "smooth", block: "nearest" }); return;
+    }
+    if (t.dataset.time) {
+      st.time = t.dataset.time; st.err = "";
+      if (!st.pay) {
+        try { const sv = JSON.parse(localStorage.getItem("yp-cliente")) || {}; if (sv.pay && pays().includes(sv.pay)) st.pay = sv.pay; } catch {}
+      }
+      render();
+      document.getElementById("stepForm")?.scrollIntoView({ behavior: "smooth", block: "start" }); return;
+    }
+    if (t.dataset.pay) { st.pay = t.dataset.pay; st.err = ""; render(); return; }
+    if (t.id === "copyPix") {
+      const key = document.getElementById("pixKey").textContent;
+      navigator.clipboard?.writeText(key).then(() => toast("Chave Pix copiada"), () => toast("Selecione e copie a chave"));
+      return;
+    }
+    if (t.id === "again") { st.done = null; st.time = null; st.date = null; load(); }
+  });
+  app.addEventListener("input", e => {
+    if (e.target.id === "fTel") { const p = e.target.selectionStart === e.target.value.length; e.target.value = maskPhone(e.target.value); if (p) e.target.selectionStart = e.target.value.length; }
+  });
+  app.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (st.sending) return;
+    const nome = document.getElementById("fNome").value.trim().replace(/\s+/g, " ");
+    const tel = document.getElementById("fTel").value.trim();
+    const err = document.getElementById("fErr");
+    if (nome.length < 2) { err.textContent = "Digite seu nome."; return; }
+    if (digits(tel).length < 10) { err.textContent = "Digite seu WhatsApp com DDD."; return; }
+    if (pays().length && !st.pay) { err.textContent = "Escolha a forma de pagamento."; return; }
+    const svc = service();
+    const barber = st.barber === "*" ? freeBarbers(st.date, toMin(st.time), svc.duracao)[0] : st.barber;
+    st.sending = true; st.err = ""; render();
+    document.getElementById("fNome").value = nome; document.getElementById("fTel").value = tel;
+    const { error } = await sb.rpc("criar_agendamento", {
+      p_cliente: nome, p_telefone: tel, p_servico_id: svc.id, p_barbeiro: barber, p_data: st.date, p_hora: st.time, p_pagamento: st.pay || ""
+    });
+    st.sending = false;
+    if (error) {
+      st.err = error.message && !/fetch|network/i.test(error.message) ? error.message : "Sem conexão. Verifique a internet e tente de novo.";
+      const today = ymd(new Date());
+      st.busy = await fetchBusy(today, addDays(today, st.horizon));
+      if (!slotsFor(st.date).includes(st.time)) st.time = null;
+      render();
+      if (!st.time) { toast(st.err); }
+      return;
+    }
+    try { localStorage.setItem("yp-cliente", JSON.stringify({ nome, tel, pay: st.pay })); } catch {}
+    st.done = { nome, servico: svc.nome, preco: svc.preco, data: st.date, hora: st.time, barbeiro: barber, pagamento: st.pay || "" };
+    render();
+  });
+
+  // Atualiza preços, dias e horários quando o cliente volta para a página
+  let lastLoad = Date.now();
+  document.addEventListener("visibilitychange", async () => {
+    if (document.hidden || st.done || st.sending || Date.now() - lastLoad < 30000) return;
+    lastLoad = Date.now();
+    await load();
+    if (st.time && !slotsFor(st.date).includes(st.time)) { st.time = null; render(); }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
